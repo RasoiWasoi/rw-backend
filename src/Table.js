@@ -32,7 +32,7 @@ const Table = ({ data }) => {
       }}
     >
       <table style={{ borderCollapse: "collapse" }}>
-        <thead>
+        <thead style={{}}>
           <tr>
             {fixedColumns.map((column, index) => (
               <th key={index} style={tableHeaderStyle}>
@@ -61,12 +61,14 @@ const tableHeaderStyle = {
   border: "1px solid #ddd",
   padding: "8px",
   textAlign: "left",
-  backgroundColor: "#f2f2f2",
+  backgroundColor: "#DBB9CB",
+  fontSize: '14px',
 };
 
 const tableCellStyle = {
   border: "1px solid #ddd",
   padding: "8px",
+  fontSize: "14px",
 };
 
 export default Table;
