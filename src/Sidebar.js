@@ -115,15 +115,17 @@ const Sidebar = ({ companyName = "Rasoi Wasoi", options, onSelectOption }) => {
           </div>
 
           <ul>
-            {options.map((option, index) => (
-              <button
-                key={index}
-                style={{ ...buttonStyle, color: "#240A34" }}
-                onClick={() => onSelectOption(option)}
-              >
-                {option}
-              </button>
-            ))}
+            {options
+              .filter((option) => option !== "Choose Option")
+              .map((option, index) => (
+                <button
+                  key={index}
+                  style={{ ...buttonStyle, color: "#240A34" }}
+                  onClick={() => onSelectOption(option)}
+                >
+                  {option}
+                </button>
+              ))}
           </ul>
         </>
       )}

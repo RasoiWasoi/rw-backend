@@ -9,6 +9,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import FeedbackFormSkips from "./FeedbackFormSkips";
 import LoginPage from "./LoginPage";
+import { useEffect } from "react";
 
 const App = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -16,10 +17,34 @@ const App = () => {
   const [tableData, setTableData] = useState([]);
   const [showTable, setShowTable] = useState(false);
 
+  const [tableWidth, setTableWidth] = useState("60%");
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Adjust table width based on screen size
+      if (window.innerWidth <= 768) {
+        setTableWidth("100%");
+      } else {
+        setTableWidth("60%");
+      }
+    };
+
+    // Add event listener for window resize
+    window.addEventListener("resize", handleResize);
+
+    // Call handleResize on component mount to set initial table width
+    handleResize();
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -96,8 +121,9 @@ const App = () => {
   };
 
   const handleOptionSelection = async (selectedOption) => {
-    console.log(selectedOption);
-    setSelectedOption(selectedOption);
+    if (selectedOption !== "Choose Option") {
+      setSelectedOption(selectedOption);
+    }
   };
 
   const handleDateChange = (date) => {
@@ -117,6 +143,7 @@ const App = () => {
         >
           <Sidebar
             options={[
+              "Choose Option",
               "Add Subscriptions",
               "Add Order History",
               "Add Skips",
@@ -145,7 +172,7 @@ const App = () => {
                 {showTable && (
                   <div
                     style={{
-                      width: "60%",
+                      width: tableWidth,
                       overflowX: "auto",
                       margin: "0 auto",
                     }}
