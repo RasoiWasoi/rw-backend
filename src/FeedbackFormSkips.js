@@ -1,5 +1,5 @@
 // FeedbackForm.js
-import React, { useRef, useEffect } from "react";
+import React from "react";
 
 const FeedbackFormSkips = () => {
   return (
