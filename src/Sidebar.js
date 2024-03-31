@@ -4,7 +4,6 @@ import logo from "./logo_without_bg.png";
 import { useState, useEffect } from "react";
 
 const sidebarStyle = {
-    // flex: 1,
   backgroundColor: "#f4f4f4",
   width: "250px",
   height: "100%",
@@ -17,7 +16,6 @@ const sidebarStyle = {
 };
 
 const buttonStyle = {
-  // width: "100%",
   display: "block",
   padding: "14px",
   border: "none",
@@ -45,7 +43,6 @@ const dropdownStyle = {
   width: "100%",
   padding: "10px",
   boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-  //   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
   boxSizing: "border-box",
@@ -53,7 +50,6 @@ const dropdownStyle = {
 
 const selectStyle = {
   padding: "10px",
-  width: "200px",
 };
 
 const Sidebar = ({ companyName = "Rasoi Wasoi", options, onSelectOption }) => {
@@ -100,7 +96,13 @@ const Sidebar = ({ companyName = "Rasoi Wasoi", options, onSelectOption }) => {
             onChange={(e) => onSelectOption(e.target.value)}
           >
             {options.map((option, index) => (
-              <option key={index} value={option}>
+              <option
+                key={index}
+                value={option}
+                style={{
+                  color: "#240A34",
+                }}
+              >
                 {option}
               </option>
             ))}
@@ -115,7 +117,8 @@ const Sidebar = ({ companyName = "Rasoi Wasoi", options, onSelectOption }) => {
           <ul>
             {options.map((option, index) => (
               <button
-                style={buttonStyle}
+                key={index}
+                style={{ ...buttonStyle, color: "#240A34" }}
                 onClick={() => onSelectOption(option)}
               >
                 {option}

@@ -8,13 +8,18 @@ import Table from "./Table";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import FeedbackFormSkips from "./FeedbackFormSkips";
+import LoginPage from "./LoginPage";
 
 const App = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOption, setSelectedOption] = useState("Get Daily Orders");
   const [tableData, setTableData] = useState([]);
-  //   const [skipsData, setSkipsData] = useState([]);
   const [showTable, setShowTable] = useState(false);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
 
   const fetchData = async () => {
     try {
@@ -37,9 +42,6 @@ const App = () => {
           },
         }
       );
-
-      //   console.log(skipsResponse);
-      //   console.log(response.data.records);
 
       // Filter records based on current month and today's day
       const filteredData = filterData(
@@ -94,6 +96,7 @@ const App = () => {
   };
 
   const handleOptionSelection = async (selectedOption) => {
+    console.log(selectedOption);
     setSelectedOption(selectedOption);
   };
 
@@ -106,44 +109,57 @@ const App = () => {
   };
 
   return (
-    <div className="app-container" style={{ display: "flex" }}>
-      <Sidebar
-        options={[
-          "Add Subscriptions",
-          "Add Order History",
-          "Add Skips",
-          "Get Daily Orders",
-        ]}
-        onSelectOption={handleOptionSelection}
-      />
-      <div className="main-content" style={{ flex: 1, overflowX: "auto" }}>
-        {selectedOption === "Add Subscriptions" && (
-          <FeedbackFormSubscriptions />
-        )}
-        {selectedOption === "Add Order History" && <FeedbackFormHistory />}
-        {selectedOption === "Add Skips" && <FeedbackFormSkips />}
-        {selectedOption === "Get Daily Orders" && (
-          <>
-            <div style={{ textAlign: "center", marginBottom: "10px" }}>
-              <h2>Order Details</h2>
-              <DatePicker selected={selectedDate} onChange={handleDateChange} />
-              <button onClick={handleShowTable}>Show Orders</button>
-            </div>
+    <div>
+      {isLoggedIn ? (
+        <div
+          className="app-container"
+          style={{ display: "flex", flexDirection: "column" }}
+        >
+          <Sidebar
+            options={[
+              "Add Subscriptions",
+              "Add Order History",
+              "Add Skips",
+              "Get Daily Orders",
+            ]}
+            onSelectOption={handleOptionSelection}
+          />
 
-            {showTable && (
-              <div
-                style={{
-                  width: "60%",
-                  overflowX: "auto",
-                  margin: "0 auto",
-                }}
-              >
-                <Table data={tableData} />
-              </div>
+          <div className="main-content" style={{ flex: 1, overflowX: "auto" }}>
+            {selectedOption === "Add Subscriptions" && (
+              <FeedbackFormSubscriptions />
             )}
-          </>
-        )}
-      </div>
+            {selectedOption === "Add Order History" && <FeedbackFormHistory />}
+            {selectedOption === "Add Skips" && <FeedbackFormSkips />}
+            {selectedOption === "Get Daily Orders" && (
+              <>
+                <div style={{ textAlign: "center", marginBottom: "10px" }}>
+                  <h2 style={{ color: "#891652" }}>Order Details</h2>
+                  <DatePicker
+                    selected={selectedDate}
+                    onChange={handleDateChange}
+                  />
+                  <button onClick={handleShowTable}>Show Orders</button>
+                </div>
+
+                {showTable && (
+                  <div
+                    style={{
+                      width: "60%",
+                      overflowX: "auto",
+                      margin: "0 auto",
+                    }}
+                  >
+                    <Table data={tableData} />
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      ) : (
+        <LoginPage onLogin={handleLogin} />
+      )}
     </div>
   );
 };
