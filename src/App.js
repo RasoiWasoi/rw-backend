@@ -14,6 +14,8 @@ import { useEffect } from "react";
 const App = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedOption, setSelectedOption] = useState("Get Daily Orders");
+  const [selectedShowOrderTypeOption, setSelectedShowOrderTypeOption] =
+    useState("All");
   const [tableData, setTableData] = useState([]);
   const [showTable, setShowTable] = useState(false);
 
@@ -22,6 +24,10 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const handleLogin = () => {
     setIsLoggedIn(true);
+  };
+
+  const handleSelectedShowOrderTypeOption = (event) => {
+    setSelectedShowOrderTypeOption(event.target.value);
   };
 
   useEffect(() => {
@@ -96,12 +102,23 @@ const App = () => {
         );
       });
 
+      const conditionSelectedShowOrderTypeOption = () => {
+        if (selectedShowOrderTypeOption === "All") {
+          return true;
+        } else {
+          return record.fields["Lunch/Dinner"].includes(
+            selectedShowOrderTypeOption
+          );
+        }
+      };
+
       // Check if Month matches current month and Days includes today's day
       return (
         record.fields.Month ===
           currentDate.toLocaleString("default", { month: "long" }) &&
         record.fields.Days.includes(getDayName(currentDay)) &&
-        !skipMatches
+        !skipMatches &&
+        conditionSelectedShowOrderTypeOption()
       );
     });
   };
@@ -165,7 +182,21 @@ const App = () => {
                   <DatePicker
                     selected={selectedDate}
                     onChange={handleDateChange}
+                    style={{ borderRadius: "10px", padding: "10px" }}
                   />
+                  <select
+                    value={selectedShowOrderTypeOption}
+                    onChange={handleSelectedShowOrderTypeOption}
+                    style={{
+                      marginLeft: "10px",
+                      marginRight: "10px",
+                    }}
+                  >
+                    <option value="All">All</option>
+                    <option value="Lunch">Lunch</option>
+                    <option value="Dinner">Dinner</option>
+                  </select>
+
                   <button onClick={handleShowTable}>Show Orders</button>
                 </div>
 
