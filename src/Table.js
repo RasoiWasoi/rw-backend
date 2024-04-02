@@ -15,10 +15,10 @@ const fixedColumns = [
   "Lunch/Dinner",
 ];
 
-const Table = ({ data }) => {
-  if (!data || data.length === 0) {
-    return <div>No data available</div>;
-  }
+const Table = ({ data, tableName }) => {
+  // if (!data || data.length === 0) {
+  //   return <div>No data available</div>;
+  // }
 
   const records = data;
 
@@ -33,6 +33,11 @@ const Table = ({ data }) => {
     >
       <table style={{ borderCollapse: "collapse" }}>
         <thead style={{}}>
+          <tr>
+            <th colSpan={fixedColumns.length} style={tableNameStyle}>
+              {tableName}
+            </th>
+          </tr>
           <tr>
             {fixedColumns.map((column, index) => (
               <th key={index} style={tableHeaderStyle}>
@@ -62,10 +67,16 @@ const tableHeaderStyle = {
   padding: "8px",
   textAlign: "left",
   backgroundColor: "#DBB9CB",
-  fontSize: '14px',
+  fontSize: "14px",
 };
 
 const tableCellStyle = {
+  border: "1px solid #ddd",
+  padding: "8px",
+  fontSize: "14px",
+};
+
+const tableNameStyle = {
   border: "1px solid #ddd",
   padding: "8px",
   fontSize: "14px",

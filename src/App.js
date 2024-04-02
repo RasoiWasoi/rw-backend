@@ -10,6 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import FeedbackFormSkips from "./FeedbackFormSkips";
 import LoginPage from "./LoginPage";
 import { useEffect } from "react";
+import FeedbackFormOneTime from "./FeedbackFormOneTime";
 
 const App = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -17,6 +18,7 @@ const App = () => {
   const [selectedShowOrderTypeOption, setSelectedShowOrderTypeOption] =
     useState("All");
   const [tableData, setTableData] = useState([]);
+  const [oneTimeTableData, setOneTimeTableData] = useState([]);
   const [showTable, setShowTable] = useState(false);
 
   const [tableWidth, setTableWidth] = useState("60%");
@@ -74,6 +76,16 @@ const App = () => {
         }
       );
 
+      const oneTimeResponse = await axios.get(
+        "https://api.airtable.com/v0/appdxgViWfvCf8qq8/tblUjWgud6SPD95B8",
+        {
+          headers: {
+            Authorization:
+              "Bearer patwBa9X03vyo4aHj.efbe6aa9e86c235a23cb6ee9979f85c221a52b99df186141c3ac812e22925ab8",
+          },
+        }
+      );
+
       // Filter records based on current month and today's day
       const filteredData = filterData(
         response.data.records,
@@ -82,6 +94,7 @@ const App = () => {
 
       setTableData(filteredData);
       setShowTable(true); // Show table when data is fetched
+      setOneTimeTableData(filterOneTimeData(oneTimeResponse.data.records));
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -95,10 +108,16 @@ const App = () => {
     return records.filter((record) => {
       // Check if there are any skip records that match the subscription
       const skipMatches = skipsRecords.some((skip) => {
+        const skipLunchOrDinner = skip.fields["Lunch/Dinner"].some((meal) =>
+          record.fields["Lunch/Dinner"].includes(meal)
+        );
+
         return (
-          skip.fields.Date === new Date().toISOString().slice(0, 10) &&
-          skip.fields["Lunch/Dinner"] === record.fields["Lunch/Dinner"] &&
-          skip.fields.Name === record.fields.Name
+          skip.fields.Date ===
+            selectedDate.toLocaleDateString().split("/").reverse().join("-") &&
+          skipLunchOrDinner &&
+          // skip.fields.Name === record.fields.Name
+          skip.fields.Name.includes(record.fields.Name)
         );
       });
 
@@ -118,6 +137,27 @@ const App = () => {
           currentDate.toLocaleString("default", { month: "long" }) &&
         record.fields.Days.includes(getDayName(currentDay)) &&
         !skipMatches &&
+        conditionSelectedShowOrderTypeOption()
+      );
+    });
+  };
+
+  const filterOneTimeData = (records) => {
+    return records.filter((record) => {
+      const conditionSelectedShowOrderTypeOption = () => {
+        if (selectedShowOrderTypeOption === "All") {
+          return true;
+        } else {
+          return record.fields["Lunch/Dinner"].includes(
+            selectedShowOrderTypeOption
+          );
+        }
+      };
+
+      // Check if Month matches current month and Days includes today's day
+      return (
+        record.fields.Date ===
+          selectedDate.toLocaleDateString().split("/").reverse().join("-") &&
         conditionSelectedShowOrderTypeOption()
       );
     });
@@ -164,6 +204,7 @@ const App = () => {
               "Add Subscriptions",
               "Add Order History",
               "Add Skips",
+              "Add One Time",
               "Get Daily Orders",
             ]}
             onSelectOption={handleOptionSelection}
@@ -175,6 +216,7 @@ const App = () => {
             )}
             {selectedOption === "Add Order History" && <FeedbackFormHistory />}
             {selectedOption === "Add Skips" && <FeedbackFormSkips />}
+            {selectedOption === "Add One Time" && <FeedbackFormOneTime />}
             {selectedOption === "Get Daily Orders" && (
               <>
                 <div style={{ textAlign: "center", marginBottom: "10px" }}>
@@ -208,7 +250,19 @@ const App = () => {
                       margin: "0 auto",
                     }}
                   >
-                    <Table data={tableData} />
+                    <Table data={tableData} tableName={"Subscriptions"} />
+                  </div>
+                )}
+
+                {showTable && (
+                  <div
+                    style={{
+                      width: tableWidth,
+                      overflowX: "auto",
+                      margin: "0 auto",
+                    }}
+                  >
+                    <Table data={oneTimeTableData} tableName={"One Time"} />
                   </div>
                 )}
               </>
