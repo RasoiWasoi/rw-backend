@@ -12,6 +12,8 @@ import LoginPage from "./LoginPage";
 import { useEffect } from "react";
 import FeedbackFormOneTime from "./FeedbackFormOneTime";
 
+const timeZone = { timeZone: "Asia/Kolkata" };
+
 const App = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedOption, setSelectedOption] = useState("Get Daily Orders");
@@ -30,6 +32,13 @@ const App = () => {
 
   const handleSelectedShowOrderTypeOption = (event) => {
     setSelectedShowOrderTypeOption(event.target.value);
+  };
+
+  const getYYYYMMDDFormat = (month, day, year) => {
+    const monthString = month < 10 ? `0${month}` : `${month}`;
+    const dayString = day < 10 ? `0${day}` : `${day}`;
+    const yearString = `${year}`;
+    return `${yearString}-${monthString}-${dayString}`;
   };
 
   useEffect(() => {
@@ -170,7 +179,7 @@ const App = () => {
       "Monday",
       "Tuesday",
       "Wednesday",
-      "Thursday",
+      "Thrusday",
       "Friday",
       "Saturday",
     ];
@@ -202,7 +211,7 @@ const App = () => {
             options={[
               "Choose Option",
               "Add Subscriptions",
-              "Add Order History",
+              // "Add Order History",
               "Add Skips",
               "Add One Time",
               "Get Daily Orders",
